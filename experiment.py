@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import sys
-from alignment1 import *
+from alignment import *
 import statistics
 
 #parse arguments
-if len(sys.argv) != 7:
-    print("incorrect number of args, should be 6")
+if len(sys.argv) != 6:
+    print("incorrect number of args, should be 5")
 else:
     pathToAerialKeyPoints, pathToSatelliteKeyPoints, pathToAerialImage, pathToSatelliteImage, pathToMetaData = sys.argv[1], \
                                                                                                      sys.argv[2], \
@@ -24,15 +24,15 @@ else:
 
     # read pixel coordinates of UAV image to count its (lat, lon) coordinates, read satellite image corners' coordinates
     with open(pathToMetaData, 'r') as f:
-        lat_left, lon_left = map(int, f.readline().split())
-        lat_right, lon_right = map(int, f.readline().split())
+        lat_left, lon_left = map(float, f.readline().split())
+        lat_right, lon_right = map(float, f.readline().split())
         X, Y = map(int, f.readline().split())
 
     # find and draw matches
     pairIndexes = [j for j in range(len(keyPointsAerial))]
     matches = findMatches(pairIndexes)
     imageMatches = drawMatches(matches, aerialImage, satelliteImage, keyPointsAerial, keyPointsSatellite)
-    cv.imwrite("image_matches", imageMatches)
+    cv.imwrite("image_matches.png", imageMatches)
 
     # compute homography transform
     H = findHomographyTransform(keyPointsAerial, keyPointsSatellite, matches)

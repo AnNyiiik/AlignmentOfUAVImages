@@ -1,4 +1,4 @@
-cv2
-math
+matplotlib
 numpy
 pillow
+opencv-python 
