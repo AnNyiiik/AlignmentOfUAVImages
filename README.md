@@ -2,7 +2,7 @@
 ### Description
 This tool is designed to calculate UAV pixel coordinates in the world coordinate system using the corresponded satellite
 image. The transformation between pair of pictures calculated using key points pairs extracted from both of images. 
-![key points for pair of images to calculate transformation](https://github.com/AnNyiiik/HWThirdTerm/pull/1#discussion_r1441538792)
+![visualization](https://github.com/AnNyiiik/HWThirdTerm/assets/114094098/b6596732-c49f-47cc-baa8-01f9c97bfd31)
 ### Usage
 1. Clone the repository running `git clone git@github.com:AnNyiiik/AlignmentOfUAVImages.git` on a terminal.
 1. Add your data to the repository root folder  [example of data](exampleOfData).
@@ -17,8 +17,7 @@ image. The transformation between pair of pictures calculated using key points p
    * results 
 ### Experimental results
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
-ESRI World imagery. Both of sets were received via QGIS. Image collections can be received [here](). The reprojection 
-error value and its standard deviation for each pair is presented in the following table:
+ESRI World imagery. Both of sets were received via QGIS. The reprojection error value and its standard deviation for each pair is presented in the following table:
 
 | pair  | provider         | reprojection error | standard deviation |
 | ----- | ---------------- | ------------------ | ------------------ |
