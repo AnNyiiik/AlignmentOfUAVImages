@@ -30,7 +30,6 @@ def calculate_point_in_destination_image(image_source, pixel, homography_matrix)
 def calculate_pixel_coordinates(
     image_source,
     pixel,
-    destination_image,
     homography_matrix,
     coordinates_of_top_left,
     coordinates_of_bottom_right,

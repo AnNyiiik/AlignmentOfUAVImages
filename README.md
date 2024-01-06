@@ -20,10 +20,10 @@ ESRI World imagery. Both of sets were received via QGIS. The images can be seen 
 Comparison of the maps providers' results are presented on the following hist:
 ![reprojection_error](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/87e2674e-cbad-4e74-aa00-03b90db246b5)
 
-|     provider     | mean value for error | max error value | min error value | 
-| ---------------- | -------------------- | --------------- | --------------- |
-|      esri        |        1.145         |      6.334      |      0.182      |
-| google satellite |        0.892         |      4.577      |      0.165      |
+|     provider     | mean value for error | max error value | min error value | standard deviation |
+| ---------------- | -------------------- | --------------- | --------------- | ------------------ |
+|      esri        |        1.145         |      6.334      |      0.182      |       1.244        |
+| google satellite |        0.892         |      4.577      |      0.165      |       0.862        |
 Reprojection errors with standard deviation value for each image in each map providers' collection:
-![reprojection_error_esri](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/e45db05a-83a3-4a1e-bee4-e22da7579473)
-![google_sat_error](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/98e2dc14-e7e0-4333-9944-f4d3097fd6c4)
+![reprojection_error_esri](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/5c72f6f3-a1da-4fde-b590-43fd5adeb44c)
+![google_satellite_error_pandas](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/cf6637a2-196b-4c02-b08f-d832a3cb4088)
