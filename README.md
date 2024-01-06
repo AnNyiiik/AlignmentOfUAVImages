@@ -16,8 +16,8 @@ images.
    * results 
 ### Experimental results
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
-ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](). Comparison of the maps providers'
-results are presented on the following hist:
+ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](https://disk.yandex.ru/d/gnq7IZf6hADQyA). 
+Comparison of the maps providers' results are presented on the following hist:
 ![reprojection_error](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/87e2674e-cbad-4e74-aa00-03b90db246b5)
 
 |     provider     | mean value for error | max error value | min error value | 
