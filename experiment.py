@@ -2,7 +2,6 @@ import alignment
 import argparse
 import cv2 as cv
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 import pandas as pd
 import seaborn as sns
@@ -15,7 +14,7 @@ parser.add_argument("path_folder_with_data", type=str)
 args = parser.parse_args()
 errors = list()
 #set experiment for each pair in subdirectory
-for (root,dirs,files) in os.walk('/Users/annnikolaeff/Desktop/pairs_esri', topdown=True):
+for (root,dirs,files) in os.walk(args.path_folder_with_data, topdown=True):
         current_location = root
         if len(dirs) == 0:
         # read all key points for UAV and satellite images
@@ -42,12 +41,10 @@ for (root,dirs,files) in os.walk('/Users/annnikolaeff/Desktop/pairs_esri', topdo
 
             # compute homography transform
             H = alignment.find_homography_transform(key_points_aerial, key_points_satellite)
-
             # count reprojection error
             points_before_homography = [[key_points_aerial[j].pt[0], key_points_aerial[j].pt[1]] for j in range(len(key_points_aerial))]
-            points_under_homography = cv.perspectiveTransform(np.array(points_before_homography).reshape(-1,1,2).astype(np.float32), H)
+            points_under_homography = alignment.calculate_pixels_coordinates_in_destination_image(points_before_homography, H)
             truth_points = [[key_points_satellite[j].pt[0], key_points_satellite[j].pt[1]] for j in range(len(key_points_satellite))]
-
 
             error, declines = alignment.find_reprojection_error(
                 truth_points, points_under_homography

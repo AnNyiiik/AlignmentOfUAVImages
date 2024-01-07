@@ -10,6 +10,15 @@ def read_key_points_from_file(path):
         key_points.append(cv.KeyPoint(point[0], point[1], 1))
     return key_points
 
+def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix):
+    points_under_homography = cv.perspectiveTransform(
+        np.array(pixels).reshape(-1, 1, 2).astype(np.float32), homography_matrix)
+    for i in range(len(pixels)):
+        norm = np.linalg.norm(np.array(homography_matrix[2]).dot([pixels[i][0], pixels[i][1], 1]))
+        points_under_homography[i][0][0] = points_under_homography[i][0][0] / norm
+        points_under_homography[i][0][1] = points_under_homography[i][0][1] / norm
+    return points_under_homography
+
 def calculate_pixel_coordinates(
     image_source,
     pixel,
@@ -22,9 +31,8 @@ def calculate_pixel_coordinates(
         return
     if pixel[1] < 0 or pixel[1] > height:
         return
-    pixel = np.array(pixel).reshape(-1,1,2).astype(np.float32)
-    point_in_destination_image = cv.perspectiveTransform(pixel, homography_matrix)
 
+    point_in_destination_image = calculate_pixels_coordinates_in_destination_image([pixel], homography_matrix)[0][0]
     lat = coordinates_of_top_left[0] + float(
         point_in_destination_image[1]
     ) / height * float((coordinates_of_bottom_right[0] - coordinates_of_top_left[0]))
