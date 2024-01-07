@@ -3,99 +3,87 @@ import argparse
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import pandas as pd
+import seaborn as sns
 import statistics
-import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument("path_to_UAV_key_points", type=str, nargs=1)
-parser.add_argument("path_to_satellite_key_points", type=str, nargs=1)
-parser.add_argument("path_to_UAV_image", type=str, nargs=1)
-parser.add_argument("path_to_satellite_image", type=str, nargs=1)
-parser.add_argument("path_to_meta_data", type=str, nargs=1)
+parser.add_argument("path_folder_with_data", type=str)
 
 # parse arguments
 args = parser.parse_args()
-print(args.path_to_UAV_key_points)
-# read all key points for UAV and satellite images
-key_points_aerial = alignment.read_key_points_from_file(args.path_to_UAV_key_points[0])
-key_points_satellite = alignment.read_key_points_from_file(
-    args.path_to_satellite_key_points[0]
-)
+errors = list()
+#set experiment for each pair in subdirectory
+for (root,dirs,files) in os.walk('/Users/annnikolaeff/Desktop/pairs_esri', topdown=True):
+        current_location = root
+        if len(dirs) == 0:
+        # read all key points for UAV and satellite images
+            key_points_aerial = alignment.read_key_points_from_file(current_location + '/matched_kpts_query')
+            key_points_satellite = alignment.read_key_points_from_file(current_location + '/matched_kpts_reference')
 
-if (
-    len(key_points_aerial) < 4
-    or len(key_points_satellite) < 4
-    or len(key_points_aerial) != len(key_points_satellite)
-):
-    print("Sorry, there sre too few correspondences to count transformation")
+            if (
+                len(key_points_aerial) < 4
+                or len(key_points_satellite) < 4
+                or len(key_points_aerial) != len(key_points_satellite)
+            ):
+                print("Sorry, there are too few correspondences to count transformation")
+                continue
+            aerial_image = cv.imread(current_location + "/uav_after_resize.png")
+            satellite_image = cv.imread(current_location + "/satellite_after_resize.png")
 
-aerial_image = cv.imread(args.path_to_UAV_image[0])
-satellite_image = cv.imread(args.path_to_satellite_image[0])
+            # find and draw matches
+            pair_indexes = [j for j in range(len(key_points_aerial))]
+            matches = [cv.DMatch(i, i, 1) for i in range(len(key_points_aerial))]
+            image_matches = alignment.draw_matches(
+                matches, aerial_image, satellite_image, key_points_aerial, key_points_satellite
+            )
+            cv.imwrite("image_matches.png", image_matches)
 
-# read pixel coordinates of UAV image to count its (lat, lon) coordinates, read satellite image corners' coordinates
-with open(args.path_to_meta_data[0], "r") as f:
-    lat_left, lon_left = map(float, f.readline().split())
-    lat_right, lon_right = map(float, f.readline().split())
-    X, Y = map(int, f.readline().split())
+            # compute homography transform
+            H = alignment.find_homography_transform(key_points_aerial, key_points_satellite)
 
-# find and draw matches
-pair_indexes = [j for j in range(len(key_points_aerial))]
-matches = alignment.find_matches(pair_indexes)
-image_matches = alignment.draw_matches(
-    matches, aerial_image, satellite_image, key_points_aerial, key_points_satellite
-)
-cv.imwrite("image_matches.png", image_matches)
+            # count reprojection error
+            points_before_homography = [[key_points_aerial[j].pt[0], key_points_aerial[j].pt[1]] for j in range(len(key_points_aerial))]
+            points_under_homography = cv.perspectiveTransform(np.array(points_before_homography).reshape(-1,1,2).astype(np.float32), H)
+            truth_points = [[key_points_satellite[j].pt[0], key_points_satellite[j].pt[1]] for j in range(len(key_points_satellite))]
 
-# compute homography transform
-H = alignment.find_homography_transform(key_points_aerial, key_points_satellite)
 
-# count reprojection error
-points_under_homography = [[0] * 2 for j in range(len(key_points_aerial))]
-truth_points = [[0] * 2 for j in range(len(key_points_aerial))]
-for j in range(len(key_points_aerial)):
-    dest_point = alignment.calculate_point_in_destination_image(
-        aerial_image, key_points_aerial[j], H
-    )
-    points_under_homography[j][0], points_under_homography[j][1] = (
-        dest_point[0],
-        dest_point[1],
-    )
-    truth_points[j][0], truth_points[j][1] = (
-        key_points_satellite[j].pt[0],
-        key_points_satellite[j].pt[1],
-    )
+            error, declines = alignment.find_reprojection_error(
+                truth_points, points_under_homography
+            )
+            errors.append(error)
 
-error, declines = alignment.find_reprojection_error(
-    truth_points, points_under_homography
-)
+            # save hist of reprojection error and its value to the experiment results folder
+            with open(current_location + "/reprojection_error", "w") as f:
+                f.write("reprojection error: " + str(error) + "\n")
 
-# count pixel coordinates
-lat, lon = alignment.calculate_pixel_coordinates(
-    aerial_image,
-    (X, Y),
-    satellite_image,
-    H,
-    (lat_left, lon_left),
-    (lat_right, lon_right),
-)
+            sns.displot(declines, kde=True, bins=len(key_points_aerial), color = 'darkblue')
+            plt.savefig(
+                current_location + "/reprojection_error.png",
+                bbox_inches="tight",
+                pad_inches=1,
+                transparent=True,
+                facecolor="w",
+                edgecolor="b",
+                orientation="landscape",
+            )
+#count mean and standard deviation
+if (len(errors) > 0):
+    standard_deviation = statistics.stdev(errors)
+    mean = statistics.mean(errors)
+    min = min(errors)
+    max = max(errors)
 
-# save hist of reprojection error and its value to the experiment results folder
-with open("results", "w") as f:
-    f.write("reprojection error: " + str(error) + "\n")
-    f.write(
-        "standard deviation of reprojection error: "
-        + str(statistics.stdev(declines))
-        + "\n"
-    )
-    f.write("pixel coordinates (lat, lon): " + str(lat) + " " + str(lon) + "\n")
+    #save results of experiment
+    with open(args.path_folder_with_data + "/experimentResults.txt", 'w') as f:
+        f.write("standard deviation: " + str(standard_deviation) + "\n")
+        f.write("expectancy value: " + str(mean) + "\n")
+        f.write("min value: " + str(min) + "\n")
+        f.write("min value: " + str(min))
 
-plt.hist(declines, color="blue", edgecolor="black", bins=len(key_points_aerial))
-plt.savefig(
-    "reprojection_error.png",
-    bbox_inches="tight",
-    pad_inches=1,
-    transparent=True,
-    facecolor="w",
-    edgecolor="b",
-    orientation="landscape",
-)
+    #create graphic
+    err = [standard_deviation for i in range(len(errors))]
+    df = pd.DataFrame(errors)
+    df.plot(kind="bar", title='Reprojection error for each pair (UAV + satellite)', ylabel='meters', yerr=err)
+    plt.savefig(args.path_folder_with_data + "/reprojection_error_for_each_pair.png")
