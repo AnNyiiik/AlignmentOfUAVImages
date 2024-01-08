@@ -32,6 +32,7 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
         ):
             print("Sorry, there are too few correspondences to count transformation")
             continue
+
         aerial_image = cv.imread(current_location + "/uav.png")
         satellite_image = cv.imread(current_location + "/satellite.png")
 
@@ -81,6 +82,7 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
             edgecolor="b",
             orientation="landscape",
         )
+
 # count mean and standard deviation
 if len(errors) > 0:
     standard_deviation = statistics.stdev(errors)
