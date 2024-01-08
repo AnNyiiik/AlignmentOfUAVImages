@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
 
-
 def read_key_points_from_file(path):
     with open(path, "r") as f:
         lines = [line.rstrip() for line in f]
@@ -49,7 +48,6 @@ def calculate_pixel_coordinates(
     ) / width * float((coordinates_of_bottom_right[1] - coordinates_of_top_left[1]))
     return lat, lon
 
-
 def draw_matches(
     matches, aerial_image, satellite_image, key_points_aerial, key_points_satellite
 ):
@@ -63,13 +61,11 @@ def draw_matches(
     )
     return img_matches
 
-
 def find_homography_transform(key_points_aerial, key_points_satellite):
     source = [[key_point.pt[0], key_point.pt[1]] for key_point in key_points_aerial]
     dest = [[key_point.pt[0], key_point.pt[1]] for key_point in key_points_satellite]
     H, _ = cv.findHomography(np.array(source), np.array(dest), cv.RANSAC)
     return H
-
 
 def find_reprojection_error(points_truth, points_under_homography):
     if len(points_truth) == 0:

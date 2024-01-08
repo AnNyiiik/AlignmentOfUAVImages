@@ -22,7 +22,7 @@ images.
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
 ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](https://disk.yandex.ru/d/gnq7IZf6hADQyA). 
 Comparison of the maps providers' results are presented on the following hist:
-![Figure_1](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/8026519e-4023-4cea-8225-9dfc9e8a5114)
+![Figure_1](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/5028db40-87d8-49ad-84a2-bab50ff2a338)
 
 |     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
 | ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
