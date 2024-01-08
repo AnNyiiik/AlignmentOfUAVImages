@@ -6,7 +6,7 @@ images.
 ![visualization](https://github.com/AnNyiiik/HWThirdTerm/assets/114094098/b6596732-c49f-47cc-baa8-01f9c97bfd31)
 ### Usage
 1. Clone the repository running `git clone git@github.com:AnNyiiik/AlignmentOfUAVImages.git` on a terminal.
-1. Add your data to the repository root folder  [example of data](exampleOfData).
+1. Add your data to the repository root folder  [example of data](example_of_data).
 1. Run the command to execute the experiment: `python3 experiment.py PATH_TO_UAV_KEYPOINTS PATH_TO_SATELLITE_KEYPOINTS 
    PATH_TO_UAV_IMAGE PATH_TO_SATELLITE_IMAGE PATH_TO_META_DATA`.
 1. The image with matched key points, hist of reprojection error, file with the reprojection error value, 
