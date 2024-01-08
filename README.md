@@ -22,14 +22,18 @@ images.
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
 ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](https://disk.yandex.ru/d/gnq7IZf6hADQyA). 
 Comparison of the maps providers' results are presented on the following hist:
-![Figure_1](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/5028db40-87d8-49ad-84a2-bab50ff2a338)
+![comparison](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/3bb6cb3c-b10f-48f9-ab4a-cc44f153cef9)
 
 |     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
 | ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
-|      esri        |        28.54                  |      110.43     |      6.97       |       25.62        |
-| google satellite |        24.76                  |      142.89     |      4.05      |       24.43         |
+|      esri        |        27                     |      110        |      5          |       27           |
+| google satellite |        23                     |      92         |      3          |       20           |
+
+standard deviation: 26.702499228375334
+expectancy value: 27.364264132850565
+min value: 5.3187484207873466
+max value: 110.25584011450967
 
 Reprojection errors with standard deviation value for each image in each map providers' collection:
-![reprojection_error_for_each_pair](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/326ee9f6-9459-4aa1-adba-83e31e385c05)
-
-![reprojection_error_for_each_pair](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/d0f54d73-d3bd-42f9-8d8b-026bca82b5bf)
+![reprojection_error_for_each_pair_google](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/719278ed-df4c-42d2-9a8b-658313850c46)
+![reprojection_error_for_each_pair](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/d271cd9f-816d-4e29-9ff7-9cef333e6033)

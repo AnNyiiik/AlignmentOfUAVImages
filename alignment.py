@@ -10,7 +10,6 @@ def read_key_points_from_file(path):
         key_points.append(cv.KeyPoint(point[0], point[1], 1))
     return key_points
 
-
 def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix):
     points_under_homography = cv.perspectiveTransform(
         np.array(pixels).reshape(-1, 1, 2).astype(np.float32), homography_matrix
@@ -64,8 +63,8 @@ def draw_matches(
 def find_homography_transform(key_points_aerial, key_points_satellite):
     source = [[key_point.pt[0], key_point.pt[1]] for key_point in key_points_aerial]
     dest = [[key_point.pt[0], key_point.pt[1]] for key_point in key_points_satellite]
-    H, _ = cv.findHomography(np.array(source), np.array(dest), cv.RANSAC)
-    return H
+    H, mask = cv.findHomography(np.array(source), np.array(dest), cv.RANSAC)
+    return H, mask
 
 def find_reprojection_error(points_truth, points_under_homography):
     if len(points_truth) == 0:
