@@ -18,12 +18,14 @@ images.
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
 ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](https://disk.yandex.ru/d/gnq7IZf6hADQyA). 
 Comparison of the maps providers' results are presented on the following hist:
-![reprojection_error](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/87e2674e-cbad-4e74-aa00-03b90db246b5)
+![Figure_1](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/8026519e-4023-4cea-8225-9dfc9e8a5114)
 
-|     provider     | mean value for error | max error value | min error value | standard deviation |
-| ---------------- | -------------------- | --------------- | --------------- | ------------------ |
-|      esri        |        1.145         |      6.334      |      0.182      |       1.244        |
-| google satellite |        0.892         |      4.577      |      0.165      |       0.862        |
+|     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
+| ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
+|      esri        |        28.54                  |      110.43     |      6.97       |       25.62        |
+| google satellite |        24.76                  |      142.89     |      4.05      |       24.43         |
+
 Reprojection errors with standard deviation value for each image in each map providers' collection:
-![reprojection_error_esri](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/5c72f6f3-a1da-4fde-b590-43fd5adeb44c)
-![google_satellite_error_pandas](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/cf6637a2-196b-4c02-b08f-d832a3cb4088)
+![reprojection_error_for_each_pair](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/326ee9f6-9459-4aa1-adba-83e31e385c05)
+
+![reprojection_error_for_each_pair](https://github.com/AnNyiiik/AlignmentOfUAVImages/assets/114094098/d0f54d73-d3bd-42f9-8d8b-026bca82b5bf)
