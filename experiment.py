@@ -7,12 +7,14 @@ import pandas as pd
 import seaborn as sns
 import statistics
 
-parser = argparse.ArgumentParser()
-parser.add_argument("path_folder_with_data", type=str)
+
 
 # parse arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("path_folder_with_data", type=str)
 args = parser.parse_args()
 errors = list()
+
 # set experiment for each pair in subdirectory
 for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
     current_location = root
@@ -102,7 +104,7 @@ if len(errors) > 0:
     df = pd.DataFrame(errors)
     df.plot(
         kind="bar",
-        title="Reprojection error for each pair (UAV + google satellite image)",
+        title="Reprojection error for each pair (UAV + satellite image)",
         ylabel="meters",
         yerr=err,
         xlabel="pairs of images",
