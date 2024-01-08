@@ -13,10 +13,11 @@ images.
    each subdirectory:
    * image_matches.png
    * reprojection_error.png
-   * reprojection_error
-   The expectancy value of reprojection error for the whole collection and the diagram are located in the data folder:
-     * experimentResults.txt
-     * reprojection_error_for_each_pair.png
+   * reprojection_error 
+ 
+    The expectancy value of reprojection error for the whole collection and the diagram are located in the data folder:
+   * experimentResults.txt
+   * reprojection_error_for_each_pair.png
 ### Experimental results
 There were two sets of satellite images as sets of reference images. The first set is Google Satellite, the second is
 ESRI World imagery. Both of sets were received via QGIS. The images can be seen [here](https://disk.yandex.ru/d/gnq7IZf6hADQyA). 
