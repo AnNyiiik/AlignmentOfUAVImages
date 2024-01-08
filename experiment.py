@@ -32,8 +32,8 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
         ):
             print("Sorry, there are too few correspondences to count transformation")
             continue
-        aerial_image = cv.imread(current_location + "/uav_after_resize.png")
-        satellite_image = cv.imread(current_location + "/satellite_after_resize.png")
+        aerial_image = cv.imread(current_location + "/uav.png")
+        satellite_image = cv.imread(current_location + "/satellite.png")
 
         # find and draw matches
         pair_indexes = [j for j in range(len(key_points_aerial))]
@@ -100,8 +100,10 @@ if len(errors) > 0:
     df = pd.DataFrame(errors)
     df.plot(
         kind="bar",
-        title="Reprojection error for each pair (UAV + satellite image)",
+        title="Reprojection error for each pair (UAV + google satellite image)",
         ylabel="meters",
         yerr=err,
+        xlabel="pairs of images",
+        color="#FFA500"
     )
     plt.savefig(args.path_folder_with_data + "/reprojection_error_for_each_pair.png")
