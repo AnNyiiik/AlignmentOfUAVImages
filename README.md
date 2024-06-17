@@ -57,7 +57,6 @@ Reprojection errors with standard deviation value for each image in each map pro
 There were two sets of satellite images as sets of reference images as well, but they were cut so that the final size was 640*480.
 Comparison of the maps providers' results are presented on the following hist:
 ![reprojection_error_comparison.pdf](https://github.com/user-attachments/files/15866290/reprojection_error_comparison.pdf)
-![reprojection_error_google_experiment_3.pdf](https://github.com/user-attachments/files/15866309/reprojection_error_google_experiment_3.pdf)
 
 |     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
 | ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
@@ -65,4 +64,12 @@ Comparison of the maps providers' results are presented on the following hist:
 | google satellite |        285                     |      96         |      89          |       439           |
 
 Reprojection errors with standard deviation value for each image in each map providers' collection:
+![reprojection_error_google_experiment_3.pdf](https://github.com/user-attachments/files/15866309/reprojection_error_google_experiment_3.pdf)
 ![reprojection_error_esri_experiment_3.pdf](https://github.com/user-attachments/files/15866301/reprojection_error_esri_experiment_3.pdf)
+
+### Comparison
+Comparison of results according to images resolution
+|     provider     | mean value 1st experiment | mean value 1st experiment |
+| ---------------- | ----------------------------- | --------------- | 
+|      esri        |        27                     |      304        |  
+| google satellite |        23                     |      356        |   
