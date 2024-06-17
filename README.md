@@ -30,9 +30,7 @@ images.
 1. run: `docker exec -it container_id /bin/bash`
 1. run: `cd code`
 1. run `python homography_CNN_real.py --mode=test --batch_size=2`
-1. press ctrl+P ctrl+Q to exit
 1. run: `docker cp container_id:/workspace/log/results/homographies.txt path_to_copy`
-1. press ctrl+P ctrl+Q to exit
 1. run: `docker stop container_id`
 1. run on the terminal to start the experiment:
 `python experiment_2.py path_to_experimental_data_folder path_to_image_names path_to_homographies`
