@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import statistics
 
+from pathlib import PurePosixPath
+
 import alignment
 
 # parse arguments
@@ -34,10 +36,9 @@ with open(args.path_to_image_names_pairs, "r") as f:
 errors = list()
 for i in range(1, len(pair_names) + 1):
     pair = str(i)
-
-    aer_pts_path = args.path_to_folder_with_data + "/" + pair + "/matched_kpts_query"
+    aer_pts_path = PurePosixPath(args.path_to_folder_with_data).joinpath(pair, 'matched_kpts_query')
     key_points_aerial = alignment.read_key_points_from_file(aer_pts_path)
-    sat_pts_path = aer_pts_path.replace("query", "reference")
+    sat_pts_path = PurePosixPath(args.path_to_folder_with_data).joinpath(pair, 'matched_kpts_reference')
     key_points_sat = alignment.read_key_points_from_file(sat_pts_path)
     H = homographies[i]
     points_before_homography = [
@@ -66,7 +67,7 @@ max = max(errors)
 
 with open(args.path_to_folder_with_data + "/experiment_results.txt", "w") as f:
     f.write("standard deviation: " + str(standard_deviation) + "\n")
-    f.write("expectancy value: " + str(mean) + "\n")
+    f.write("mean value: " + str(mean) + "\n")
     f.write("min value: " + str(min) + "\n")
     f.write("max value: " + str(max))
 

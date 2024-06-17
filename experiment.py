@@ -7,12 +7,12 @@ import pandas as pd
 import seaborn as sns
 import statistics
 
-# parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("path_folder_with_data", type=str)
-args = parser.parse_args(["/Users/annnikolaeff/Desktop/pairs_esri"])
-errors = list()
 
+# parse arguments
+args = parser.parse_args()
+errors = list()
 # set experiment for each pair in subdirectory
 for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
     current_location = root
@@ -32,9 +32,8 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
         ):
             print("Sorry, there are too few correspondences to count transformation")
             continue
-
-        aerial_image = cv.imread(current_location + "/uav_after_resize.png")
-        satellite_image = cv.imread(current_location + "/satellite_after_resize.png")
+        aerial_image = cv.imread(current_location + "/uav.png")
+        satellite_image = cv.imread(current_location + "/satellite.png")
 
         # find and draw matches
         pair_indexes = [j for j in range(len(key_points_aerial))]
@@ -49,21 +48,18 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
         cv.imwrite("image_matches.png", image_matches)
 
         # compute homography transform
-        H, mask = alignment.find_homography_transform(key_points_aerial, key_points_satellite)
-
+        H = alignment.find_homography_transform(key_points_aerial, key_points_satellite)
         # count reprojection error
-        indexes = [i for i in range(len(key_points_aerial))]
-        indexes = list(filter(lambda x: mask[x], indexes))
         points_before_homography = [
             [key_points_aerial[j].pt[0], key_points_aerial[j].pt[1]]
-            for j in indexes
+            for j in range(len(key_points_aerial))
         ]
         points_under_homography = alignment.calculate_pixels_coordinates_in_destination_image(
             points_before_homography, H
         )
         truth_points = [
             [key_points_satellite[j].pt[0], key_points_satellite[j].pt[1]]
-            for j in indexes
+            for j in range(len(key_points_satellite))
         ]
 
         error, declines = alignment.find_reprojection_error(
@@ -85,7 +81,6 @@ for (root, dirs, files) in os.walk(args.path_folder_with_data, topdown=True):
             edgecolor="b",
             orientation="landscape",
         )
-
 # count mean and standard deviation
 if len(errors) > 0:
     standard_deviation = statistics.stdev(errors)
@@ -102,13 +97,13 @@ if len(errors) > 0:
 
     # create graphic
     err = [standard_deviation for i in range(len(errors))]
-    df = pd.DataFrame(errors, columns=None)
+    df = pd.DataFrame(errors)
     df.plot(
         kind="bar",
-        title="Reprojection error for each pair (UAV + ESRI image)",
+        title="Reprojection error for each pair (UAV + google satellite image)",
         ylabel="meters",
         yerr=err,
         xlabel="pairs of images",
-        color="#44944A"
+        color="#FFA500"
     )
     plt.savefig(args.path_folder_with_data + "/reprojection_error_for_each_pair.png")
