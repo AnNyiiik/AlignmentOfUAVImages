@@ -25,7 +25,6 @@ images.
 `python make_data_for_unsupervised_deep_homography.py path_to_folder_with_all_the_data path_to_save`
 1. pull docker image: `docker pull anyaaaaaa/unsupervised_deep_homography:version_4`
 1. create a container from image: `docker run -it image_id /bin/bash`
-1. press ctrl+P ctrl+Q to exit
 1. copy your data into container: `docker cp path_to_data_on_your_machine container_id:/workspace/unsupervisedDeepHomographyRAL2018/data`
 1. run: `docker exec -it container_id /bin/bash`
 1. run: `cd code`
@@ -58,8 +57,8 @@ Comparison of the maps providers' results are presented on the following hist:
 
 |     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
 | ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
-|      esri        |        243                     |      101        |      64          |       456           |
-| google satellite |        285                     |      96         |      89          |       439           |
+|      esri        |        243                     |      456        |      64          |       101           |
+| google satellite |        285                     |      439         |      89          |       96           |
 
 Reprojection errors with standard deviation value for each image in each map providers' collection:
 ![reprojection_error_google_experiment_3.pdf](https://github.com/user-attachments/files/15866309/reprojection_error_google_experiment_3.pdf)
