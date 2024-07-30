@@ -4,34 +4,39 @@ import os
 
 from pathlib import Path
 
-import dataloader
+import util
 import homography_finder
 
-class homography_finder_feature_based(homography_finder):
+class homography_finder_feature_based(homography_finder.homography_finder):
 
     def find_correspondences(self, img_query_path, img_reference_path):
         ##copy images to temporary folder
         img_query = cv.imread(img_query_path)
         img_reference = cv.imread(img_reference_path)
 
-        root = os.path.expanduser('~')
+        absolute_path = Path('~/AlignmentOfUAVImages').expanduser()
 
-        os.mkdir(root + "/uav")
-        cv.imwrite(root + "/uav/query.jpg", img_query)
-        query_saved_path = root + "/uav/query.jpg"
+        if not absolute_path.joinpath("uav").exists():
+            os.mkdir(absolute_path.joinpath("uav"))
+        query_saved_path = absolute_path.joinpath("uav/query.jpg")
+        cv.imwrite(query_saved_path, img_query)
 
-        os.mkdir(root + "/sat")
-        cv.imwrite(root + "/sat/reference.jpg", img_reference)
-        reference_saved_path = root + "/sat/query.jpg"
+        if not absolute_path.joinpath("sat").exists():
+            os.mkdir(absolute_path.joinpath("sat"))
+        reference_saved_path = absolute_path.joinpath("sat/reference.jpg")
+        cv.imwrite(reference_saved_path, img_reference)
 
-        os.mkdir(root + "/feature_based_method_results")
-        path_to_save = root + "/feature_based_method_results"
-        sg_weights = "jaiosisjiao"
+        if not absolute_path.joinpath("feature_based_method_results").exists():
+            os.mkdir(absolute_path.joinpath("feature_based_method_results"))
+        path_to_save = absolute_path.joinpath("feature_based_method_results")
+
+        sg_weights_path = Path('~/aero-vloc/aerial_vloc_weights/superglue_outdoor.pth').expanduser()
         ##find points
-        os.system(f"python aero-vloc/simple_two_images.matching.py {query_saved_path} {reference_saved_path} {path_to_save} {sg_weights}")
+        script_path = Path('~/simple_two_images_matching.py').expanduser()
+        os.system(f"python {script_path} {query_saved_path} {reference_saved_path} {path_to_save} {sg_weights_path}")
         ##read points
-        query_pts = dataloader.read_key_points_from_file()
-        reference_pts = dataloader.read_key_points_from_file()
+        query_pts = util.read_key_points_from_file(path_to_save.joinpath('matched_kpts_query'))
+        reference_pts = util.read_key_points_from_file(path_to_save.joinpath('matched_kpts_reference'))
         return query_pts, reference_pts
 
     def find_homography_transform(self, query_pts, reference_pts):
