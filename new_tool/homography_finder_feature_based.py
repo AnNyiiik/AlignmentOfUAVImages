@@ -16,15 +16,9 @@ class homography_finder_feature_based(homography_finder.homography_finder):
 
         absolute_path = Path('~/AlignmentOfUAVImages').expanduser()
 
-        if not absolute_path.joinpath("uav").exists():
-            os.mkdir(absolute_path.joinpath("uav"))
-        query_saved_path = absolute_path.joinpath("uav/query.jpg")
-        cv.imwrite(query_saved_path, img_query)
-
-        if not absolute_path.joinpath("sat").exists():
-            os.mkdir(absolute_path.joinpath("sat"))
-        reference_saved_path = absolute_path.joinpath("sat/reference.jpg")
-        cv.imwrite(reference_saved_path, img_reference)
+        query_saved_path, reference_saved_path = util.create_temporary_folders_for_images(img_query, img_reference)
+        query_folder = query_saved_path.parent
+        reference_folder = reference_saved_path.parent
 
         if not absolute_path.joinpath("feature_based_method_results").exists():
             os.mkdir(absolute_path.joinpath("feature_based_method_results"))
@@ -32,8 +26,8 @@ class homography_finder_feature_based(homography_finder.homography_finder):
 
         sg_weights_path = Path('~/aero-vloc/aerial_vloc_weights/superglue_outdoor.pth').expanduser()
         ##find points
-        script_path = Path('~/simple_two_images_matching.py').expanduser()
-        os.system(f"python {script_path} {query_saved_path} {reference_saved_path} {path_to_save} {sg_weights_path}")
+        script_path = Path('~/aero-vloc/simple_two_images_matching.py').expanduser()
+        os.system(f"python {script_path} {query_folder} {reference_folder} {path_to_save} {sg_weights_path}")
         ##read points
         query_pts = util.read_key_points_from_file(path_to_save.joinpath('matched_kpts_query'))
         reference_pts = util.read_key_points_from_file(path_to_save.joinpath('matched_kpts_reference'))
