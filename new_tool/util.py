@@ -1,9 +1,11 @@
 import cv2 as cv
-import docker
 import numpy as np
+import matplotlib.pyplot as plt
+import statistics
 import os
 
 from pathlib import Path
+from progress.bar import IncrementalBar
 
 def make_data_for_CNN_method(width_query, height_query, H):
 
@@ -22,6 +24,7 @@ def make_data_for_CNN_method(width_query, height_query, H):
     images_names_path = CNN_based_method_data.joinpath("test_real.txt")
 
     corners_str = f'0 0 {width_query} 0 {width_query} {height_query} 0 {height_query}'
+
     corners_under_homography_str = ""
     for i in range(4):
         for j in range(2):
@@ -40,7 +43,7 @@ def make_data_for_CNN_method(width_query, height_query, H):
 
 def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix):
     points_under_homography = cv.perspectiveTransform(
-        np.array(pixels).reshape(-1, 1, 2).astype(np.float32), homography_matrix
+        np.array(pixels, dtype=np.float32).reshape(-1, 1, 2), homography_matrix
     )
     for i in range(len(pixels)):
         norm = np.linalg.norm(
@@ -49,6 +52,27 @@ def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix)
         points_under_homography[i][0][0] = int(points_under_homography[i][0][0] / norm)
         points_under_homography[i][0][1] = int(points_under_homography[i][0][1] / norm)
     return points_under_homography
+
+
+def calculate_pixel_coordinates(
+    image_reference,
+    pixel,
+    homography_matrix,
+    coordinates_of_top_left,
+    coordinates_of_bottom_right,
+):
+    height, width = image_reference.shape[:2]
+
+    point_in_destination_image = calculate_pixels_coordinates_in_destination_image(
+        [pixel], homography_matrix
+    )[0][0]
+    lat = coordinates_of_top_left[0] + float(
+        point_in_destination_image[1]
+    ) / height * float((coordinates_of_bottom_right[0] - coordinates_of_top_left[0]))
+    lon = coordinates_of_top_left[1] + float(
+        point_in_destination_image[0]
+    ) / width * float((coordinates_of_bottom_right[1] - coordinates_of_top_left[1]))
+    return lat, lon
 
 def clip_image(path_to_image, size=(240, 320)):
     image = cv.imread(path_to_image)
@@ -104,10 +128,76 @@ def create_temporary_folders_for_images(img_query, img_reference):
     if not absolute_path.joinpath("uav").exists():
         os.mkdir(absolute_path.joinpath("uav"))
     query_saved_path = absolute_path.joinpath("uav/query.jpg")
-    cv.imwrite(query_saved_path, img_query)
+    cv.imwrite(str(query_saved_path), img_query)
 
     if not absolute_path.joinpath("sat").exists():
         os.mkdir(absolute_path.joinpath("sat"))
     reference_saved_path = absolute_path.joinpath("sat/reference.jpg")
-    cv.imwrite(reference_saved_path, img_reference)
+    cv.imwrite(str(reference_saved_path), img_reference)
     return query_saved_path, reference_saved_path
+
+def find_reprojection_error(H_pred, path_to_uav_gt_corr, path_to_sat_gt_corr):
+    uav_kpts = read_key_points_from_file(path_to_uav_gt_corr)
+    uav_kpts = [[uav_kpts[i].pt[0], uav_kpts[i].pt[1]] for i in range(len(uav_kpts))]
+    sat_kpts = read_key_points_from_file(path_to_sat_gt_corr)
+    sat_kpts = [[sat_kpts[i].pt[0], sat_kpts[i].pt[1]] for i in range(len(sat_kpts))]
+    uav_kpts_H_pred_transformed = calculate_pixels_coordinates_in_destination_image(uav_kpts, H_pred)
+    error = 0
+    for i in range(len(uav_kpts)):
+        decline = np.linalg.norm(sat_kpts[i] - uav_kpts_H_pred_transformed[i])
+        error += decline
+    return error / len(uav_kpts)
+
+def set_experiment(path_to_data, pair_names, kpts_files, method, method_name):
+    errors = list()
+    bar = IncrementalBar(max=len(pair_names))
+    print(f'Processing the {path_to_data} with {method_name}')
+    for pair, pair_kpts in zip(pair_names, kpts_files):
+        aer, sat = pair.split()
+        aer = os.path.join(path_to_data, aer)
+        print(aer)
+        sat = os.path.join(path_to_data, sat)
+        aer_kpts, sat_kpts = pair_kpts.split()
+        aer_kpts = os.path.join(path_to_data, aer_kpts)
+        sat_kpts = os.path.join(path_to_data, sat_kpts)
+        H_pred = method.align(aer, sat)
+        reprojection_error = find_reprojection_error(H_pred, aer_kpts, sat_kpts)
+        errors.append(reprojection_error)
+        bar.next()
+    bar.finish()
+    mean, dev = statistics.mean(errors), statistics.stdev(errors)
+    return errors, mean, dev
+
+def save_experiment_results(folder_to_save, method_name, map_name, mean, dev, errors):
+    with open(os.path.join(folder_to_save, f'{method_name}_method_with_{map_name}_map_results.txt'), 'w') as f:
+        f.write(f'reprojection error mean val: {mean}\nreprojection error standart deviation val: {dev}')
+    with open(os.path.join(folder_to_save, f'{method_name}_method_with_{map_name}_map_errors.txt'), 'w') as f:
+        for error in errors:
+            f.write(f'{error}\n')
+
+def draw_box_plot(data, path_to_save, box_labels, colors=["#faf75c"]):
+
+    fig, ax = plt.subplots()
+    ax.set_ylabel('Ошибка репроекции в пикселях')
+    plt.title("Блочная диаграмма с ограничителями выбросов")
+
+    bplot = ax.boxplot(data,
+                       patch_artist=True,
+                       tick_labels=box_labels)
+
+    if len(colors) == 1:
+        for patch in bplot['boxes']:
+            patch.set_facecolor(colors[0])
+    else:
+        for patch, color in zip(bplot['boxes'], colors):
+            patch.set_facecolor(color)
+
+    for median in bplot['medians']:
+        median.set(color='red',
+                   linewidth=3)
+
+    for flier in bplot['fliers']:
+        flier.set(color='#e7298a',
+                  alpha=0.5)
+
+    plt.savefig(path_to_save)
