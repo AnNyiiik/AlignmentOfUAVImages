@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 from progress.bar import IncrementalBar
 
-
 def make_data_for_CNN_method(width_query, height_query, H):
     corners_under_homography = calculate_pixels_coordinates_in_destination_image(
         [[0, 0], [width_query, 0], [width_query, height_query], [0, height_query]], H
@@ -15,11 +14,11 @@ def make_data_for_CNN_method(width_query, height_query, H):
 
     absolute_path = Path("~/AlignmentOfUAVImages").expanduser()
 
-    if not absolute_path.joinpath("CNN_based_method_data").exists():
-        os.mkdir(absolute_path.joinpath("CNN_based_method_data"))
-    CNN_based_method_data = absolute_path.joinpath("CNN_based_method_data")
+    if not os.path.exists(os.path.join(absolute_path, "CNN_based_method_data")):
+        os.mkdir(os.path.join(absolute_path, "CNN_based_method_data"))
+    CNN_based_method_data = os.path.join(absolute_path, "CNN_based_method_data")
 
-    with open(CNN_based_method_data.joinpath("test_real.txt"), "w") as f:
+    with open(os.path.join(CNN_based_method_data,"test_real.txt"), "w") as f:
         f.write(
             "query.jpg"
             + "  "
@@ -29,7 +28,7 @@ def make_data_for_CNN_method(width_query, height_query, H):
             + "  "
             + "reference.jpg"
         )
-    images_names_path = CNN_based_method_data.joinpath("test_real.txt")
+    images_names_path = os.path.join(CNN_based_method_data, "test_real.txt")
 
     corners_str = f"0 0 {width_query} 0 {width_query} {height_query} 0 {height_query}"
 
@@ -40,7 +39,7 @@ def make_data_for_CNN_method(width_query, height_query, H):
                 int(corners_under_homography[i][0][j])
             )
 
-    with open(CNN_based_method_data.joinpath("test_gt.txt"), "w") as f:
+    with open(os.path.join(CNN_based_method_data, "test_gt.txt"), "w") as f:
         f.write(
             corners_str
             + corners_under_homography_str
@@ -48,13 +47,13 @@ def make_data_for_CNN_method(width_query, height_query, H):
             + corners_str
             + corners_under_homography_str
         )
-    gt_path = CNN_based_method_data.joinpath("test_gt.txt")
+    gt_path = os.path.join(CNN_based_method_data, "test_gt.txt")
 
-    with open(CNN_based_method_data.joinpath("test_pts1.txt"), "w") as f:
+    with open(os.path.join(CNN_based_method_data, "test_pts1.txt"), "w") as f:
         f.write(corners_str + "\n" + corners_str)
-    query_corners_path = CNN_based_method_data.joinpath("test_pts1.txt")
+    query_corners_path = os.path.join(CNN_based_method_data, "test_pts1.txt")
 
-    return images_names_path, gt_path, query_corners_path
+    return images_names_path, gt_path, query_corners_path, CNN_based_method_data
 
 
 def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix):
@@ -152,19 +151,16 @@ def read_homography_matrix_from_file(path):
     return matrix
 
 
-def create_temporary_folders_for_images(img_query, img_reference):
-    absolute_path = Path("~/AlignmentOfUAVImages").expanduser()
-    if not absolute_path.joinpath("uav").exists():
-        os.mkdir(absolute_path.joinpath("uav"))
-    query_saved_path = absolute_path.joinpath("uav/query.jpg")
+def create_temporary_folders_for_images(img_query, img_reference, path_to_folders):
+    absolute_path = os.path.abspath(path_to_folders)
+    os.makedirs(os.path.join(absolute_path, "uav"))
+    query_saved_path = os.path.join(absolute_path, "uav/query.jpg")
     cv.imwrite(str(query_saved_path), img_query)
 
-    if not absolute_path.joinpath("sat").exists():
-        os.mkdir(absolute_path.joinpath("sat"))
-    reference_saved_path = absolute_path.joinpath("sat/reference.jpg")
+    os.mkdir(os.path.join(absolute_path, "sat"))
+    reference_saved_path = os.path.join(absolute_path, "sat/reference.jpg")
     cv.imwrite(str(reference_saved_path), img_reference)
     return query_saved_path, reference_saved_path
-
 
 def find_reprojection_error(H_pred, path_to_uav_gt_corr, path_to_sat_gt_corr):
     uav_kpts = read_key_points_from_file(path_to_uav_gt_corr)
