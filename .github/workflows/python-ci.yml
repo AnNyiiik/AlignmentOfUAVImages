@@ -1,132 +1,26 @@
-name: Python Container CI Pipeline
+name: Lint&Tests
 
-on:
-  workflow_call:
-    inputs:
-      PYTHON_VERSION:
-        required: false
-        type: string
-        default: '3.10'
-      DEPENDENCY_MANAGER:
-        required: false
-        type: string
-        default: 'pip'  # or poetry, pipenv
-      ENFORCE_PYLINT:
-        required: false
-        type: boolean
-        default: true
-      ENFORCE_BLACK:
-        required: false
-        type: boolean
-        default: true
-      ENFORCE_FLAKE8:
-        required: false
-        type: boolean
-        default: true
-      ENFORCE_DIVE:
-        required: false
-        type: boolean
-        default: true
-      PYLINT_CONFIG:
-        required: false
-        type: string
-        default: ''
-      
+on: [ push, pull_request ]
 
 jobs:
-  python-ci:
+  build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write  # Push
-      id-token: write  # Cosign - signing the images with GitHub OIDC Token
-      security-events: write  # Trivy - write vulnerability report
-
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v1
-      id: setup-python
-      with:
-        python-version: ${{ inputs.PYTHON_VERSION }}
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-    - name: Get cache metadata
-      id: cache-meta
-      run: |
-        CACHE_KEY=""
-        CACHE_PATH=""
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-        if [ ${{ inputs.DEPENDENCY_MANAGER }} = 'pip' ]; then
-          CACHE_KEY="venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/requirements.txt') }}"
-          CACHE_PATH=$(pip cache dir)
-        elif [ ${{ inputs.DEPENDENCY_MANAGER }} = 'poetry' ]; then
-          CACHE_KEY="venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}"
-          CACHE_PATH="./venv"
-        elif [ ${{ inputs.DEPENDENCY_MANAGER }} = 'pipenv' ]; then
-          CACHE_KEY="venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/Pipfile.lock') }}"
-          CACHE_PATH="./venv"
-        fi
-        echo "::set-output name=cache-key::$CACHE_KEY"
-        echo "::set-output name=cache-path::$CACHE_PATH"
+      - name: Check code style with Black
+        uses: psf/black@stable
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      if: ${{ inputs.DEPENDENCY_MANAGER == 'poetry' }}
-      with:
-        virtualenvs-create: false
-        virtualenvs-in-project: true
-        virtualenvs-path: ${{ steps.cache-meta.outputs.cache-path }}
-
-    - name: Load cached venv
-      id: cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.cache-meta.outputs.cache-path }}
-        key: ${{ steps.cache-meta.outputs.cache-key }}
-
-    - name: Install cosign
-      uses: sigstore/cosign-installer@main
-
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m venv venv
-        source venv/bin/activate
-        pip install pylint flake8 bandit pytest pytest-cov
-        if [ ${{ inputs.DEPENDENCY_MANAGER }} = 'pip' ]; then
-          pip install -r requirements.txt;
-        elif [ ${{ inputs.DEPENDENCY_MANAGER }} = 'poetry' ]; then
-          poetry install --no-root
-        elif [ ${{ inputs.DEPENDENCY_MANAGER }} = 'pipenv' ]; then
-          pip install pipenv
-          pipenv install
-        fi
-
-    - name: Run Tests
-      # Will find config automatically in `pytest.ini`, `pyproject.toml`, `tox.ini` or `setup.cfg` - https://docs.pytest.org/en/6.2.x/customize.html#configuration-file-formats
-      run: |
-        source venv/bin/activate
-        unittest
-
-    - name: Verify code style (Black)
-      uses: psf/black@stable
-      with:
-        options: "--verbose ${{ inputs.ENFORCE_BLACK && '--check' || '' }}"
-
-    - name: Enforce code style (Flake8)
-      # Will find config automatically in `setup.cfg`, `tox.ini`, or `.flake8` - https://flake8.pycqa.org/en/latest/user/configuration.html#configuration-locations
-      run: |
-        source venv/bin/activate
-        flake8 ${{ inputs.ENFORCE_FLAKE8 && '' || '--exit-zero' }}
-
-    - name: Lint code
-      # Will find config automatically in `pylintrc`, `.pylintrc`, `pyproject.toml`, NOT `setup.cfg` - https://pylint.pycqa.org/en/latest/user_guide/run.html#command-line-options
-      run: |
-        source venv/bin/activate
-        PYLINT_CONDITIONAL_ARGS=()
-        if [ -n "${{ inputs.PYLINT_CONFIG }}" ]; then
-          PYLINT_CONDITIONAL_ARGS+=( --rcfile=${{ inputs.PYLINT_CONFIG }} )
-        fi
-
-        pylint **/*.py  ${{ inputs.ENFORCE_PYLINT && '' || '--exit-zero' }} "${PYLINT_CONDITIONAL_ARGS[@]}"
+      - name: Test with unittest
+        run: |
+          python -m unittest
