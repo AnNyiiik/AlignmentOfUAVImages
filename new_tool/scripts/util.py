@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from progress.bar import IncrementalBar
 
+
 def make_data_for_CNN_method(width_query, height_query, H):
     corners_under_homography = calculate_pixels_coordinates_in_destination_image(
         [[0, 0], [width_query, 0], [width_query, height_query], [0, height_query]], H
@@ -18,7 +19,7 @@ def make_data_for_CNN_method(width_query, height_query, H):
         os.mkdir(os.path.join(absolute_path, "CNN_based_method_data"))
     CNN_based_method_data = os.path.join(absolute_path, "CNN_based_method_data")
 
-    with open(os.path.join(CNN_based_method_data,"test_real.txt"), "w") as f:
+    with open(os.path.join(CNN_based_method_data, "test_real.txt"), "w") as f:
         f.write(
             "query.jpg"
             + "  "
@@ -161,6 +162,7 @@ def create_temporary_folders_for_images(img_query, img_reference, path_to_folder
     reference_saved_path = os.path.join(absolute_path, "sat/reference.jpg")
     cv.imwrite(str(reference_saved_path), img_reference)
     return query_saved_path, reference_saved_path
+
 
 def find_reprojection_error(H_pred, path_to_uav_gt_corr, path_to_sat_gt_corr):
     uav_kpts = read_key_points_from_file(path_to_uav_gt_corr)

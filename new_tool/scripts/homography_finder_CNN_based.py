@@ -10,7 +10,6 @@ from scripts import homography_finder_feature_based
 
 class homography_finder_CNN_based(homography_finder.homography_finder):
     def align(self, img_query_path, img_reference_path):
-
         if not os.path.exists(os.path.abspath(img_query_path)):
             raise FileNotFoundError(f"file {img_query_path} does not exist")
         elif not os.path.exists(os.path.abspath(img_reference_path)):
@@ -26,7 +25,9 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
             query_saved_path,
             reference_saved_path,
         ) = util.create_temporary_folders_for_images(
-            img_query_cropped, img_reference_cropped, os.path.join(absolute_path, "CNN_method_images")
+            img_query_cropped,
+            img_reference_cropped,
+            os.path.join(absolute_path, "CNN_method_images"),
         )
 
         H = homography_finder_feature_based.homography_finder_feature_based().align(
@@ -68,9 +69,12 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
             f"docker cp {reference_saved_path} {path_to_data_inside_container}/reference.jpg >/dev/null 2>&1"
         )
 
-        images_names_path, gt_path, query_corners_path, path_to_CNN_data = util.make_data_for_CNN_method(
-            width, height, H
-        )
+        (
+            images_names_path,
+            gt_path,
+            query_corners_path,
+            path_to_CNN_data,
+        ) = util.make_data_for_CNN_method(width, height, H)
 
         path_to_save = f"{path_to_data_inside_container}/test_real.txt"
         os.system(f"docker cp {images_names_path} {path_to_save} >/dev/null 2>&1")

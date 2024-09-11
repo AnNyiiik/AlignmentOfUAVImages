@@ -21,7 +21,9 @@ class homography_finder_feature_based(homography_finder.homography_finder):
         (
             query_saved_path,
             reference_saved_path,
-        ) = util.create_temporary_folders_for_images(img_query, img_reference, os.path.join(absolute_path, "feature_method_data"))
+        ) = util.create_temporary_folders_for_images(
+            img_query, img_reference, os.path.join(absolute_path, "feature_method_data")
+        )
         query_folder = Path(query_saved_path).parent
         reference_folder = Path(reference_saved_path).parent
 
