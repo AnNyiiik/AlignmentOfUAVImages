@@ -21,6 +21,6 @@ jobs:
       - name: Check code style with Black
         uses: psf/black@stable
 
-      - name: Test with unittest
+      - name: Test with pytest
         run: |
-          python -m unittest
+          python -m pytest
