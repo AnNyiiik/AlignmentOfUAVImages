@@ -1,3 +1,4 @@
+accessify==0.3.1
 docker==7.1.0
 matplotlib==3.7.3
 numpy==1.26.2
