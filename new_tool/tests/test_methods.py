@@ -27,7 +27,7 @@ testdata_homography_search = [
 
 @pytest.mark.parametrize("method,query_path,reference_path", testdata_homography_search)
 def test_check_homography_search(method, query_path, reference_path):
-    absolute_path = "/home/runner/AlignmentOfUAVImages/AlignmentOfUAVImages"
+    absolute_path = Path("~/AlignmentOfUAVImages").expanduser()
     if not os.path.exists(os.path.join(absolute_path, "feature_based_method_results")):
         os.mkdir(os.path.join(absolute_path, "feature_based_method_results"))
     folder_with_kpts = os.path.join(absolute_path, "feature_based_method_results")

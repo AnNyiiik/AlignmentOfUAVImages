@@ -16,7 +16,7 @@ class homography_finder_feature_based(homography_finder.homography_finder):
         img_query = cv.imread(img_query_path)
         img_reference = cv.imread(img_reference_path)
 
-        absolute_path = Path("~/AlignmentOfUAVImages/AlignmentOfUAVImages").expanduser()
+        absolute_path = Path("~/AlignmentOfUAVImages").expanduser()
 
         (
             query_saved_path,
