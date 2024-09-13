@@ -154,11 +154,13 @@ def read_homography_matrix_from_file(path):
 
 def create_temporary_folders_for_images(img_query, img_reference, path_to_folders):
     absolute_path = os.path.abspath(path_to_folders)
-    os.makedirs(os.path.join(absolute_path, "uav"))
+    if not os.path.exists(os.path.join(absolute_path, "uav")):
+        os.makedirs(os.path.join(absolute_path, "uav"))
     query_saved_path = os.path.join(absolute_path, "uav/query.jpg")
     cv.imwrite(str(query_saved_path), img_query)
 
-    os.mkdir(os.path.join(absolute_path, "sat"))
+    if not os.path.exists(os.path.join(absolute_path, "sat")):
+        os.mkdir(os.path.join(absolute_path, "sat"))
     reference_saved_path = os.path.join(absolute_path, "sat/reference.jpg")
     cv.imwrite(str(reference_saved_path), img_reference)
     return query_saved_path, reference_saved_path
