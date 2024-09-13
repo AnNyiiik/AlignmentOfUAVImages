@@ -35,11 +35,8 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
         )
 
         client = docker.from_env()
-        if (
-            len(client.images.get("anyaaaaaa/unsupervised_deep_homography:version_4"))
-            == 0
-        ):
-            os.system("docker pull anyaaaaaa/unsupervised_deep_homography:version_4")
+
+        os.system("docker pull anyaaaaaa/unsupervised_deep_homography:version_4 >/dev/null 2>&1")
         if (
             len(
                 list(

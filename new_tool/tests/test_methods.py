@@ -2,7 +2,6 @@ import pytest
 import numpy as np
 import os
 
-from pathlib import Path
 from scripts import homography_finder_feature_based
 from scripts import homography_finder_CNN_based
 
@@ -32,10 +31,10 @@ def test_check_homography_search(method, query_path, reference_path):
         os.makedirs(os.path.join(absolute_path, "feature_based_method_results"))
     folder_with_kpts = os.path.join(absolute_path, "feature_based_method_results")
     os.system(
-        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_query")} {folder_with_kpts}'
+        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_query")} {folder_with_kpts} >/dev/null 2>&1'
     )
     os.system(
-        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_reference")} {folder_with_kpts}'
+        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_reference")} {folder_with_kpts} >/dev/null 2>&1'
     )
     H = method.align(query_path, reference_path)
     assert type(H) == np.ndarray
