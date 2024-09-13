@@ -23,11 +23,13 @@ testdata_homography_search = [
     ),
 ]
 
+
 @pytest.mark.parametrize("method,query_path,reference_path", testdata_homography_search)
 def test_check_homography_search(method, query_path, reference_path):
     H = method.align(query_path, reference_path)
     assert type(H) == np.ndarray
     assert H.shape == (3, 3)
+
 
 testdata_bad_input = [
     (
@@ -51,6 +53,7 @@ testdata_bad_input = [
         os.path.abspath("new_tool/tests/exp_data/sat_2.png"),
     ),
 ]
+
 
 @pytest.mark.parametrize("method,query_path,reference_path", testdata_bad_input)
 def test_check_bad_user_input(method, query_path, reference_path):
