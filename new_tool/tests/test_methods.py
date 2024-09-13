@@ -14,13 +14,13 @@ homography_finder_CNN = homography_finder_CNN_based.homography_finder_CNN_based(
 testdata_homography_search = [
     (
         homography_finder_feature,
-        os.path.abspath("exp_data/aer_1.png"),
-        os.path.abspath("exp_data/sat_1.png"),
+        os.path.abspath("tests/exp_data/aer_1.png"),
+        os.path.abspath("tests/exp_data/sat_1.png"),
     ),
     (
         homography_finder_CNN,
-        os.path.abspath("exp_data/aer_1.png"),
-        os.path.abspath("exp_data/sat_1.png"),
+        os.path.abspath("tests/exp_data/aer_1.png"),
+        os.path.abspath("tests/exp_data/sat_1.png"),
     ),
 ]
 
@@ -35,23 +35,23 @@ def test_check_homography_search(method, query_path, reference_path):
 testdata_bad_input = [
     (
         homography_finder_feature,
-        os.path.abspath("exp_data/aer_2.png"),
-        os.path.abspath("exp_data/sat_3.png"),
+        os.path.abspath("tests/exp_data/aer_2.png"),
+        os.path.abspath("tests/exp_data/sat_3.png"),
     ),
     (
         homography_finder_CNN,
-        os.path.abspath("exp_data/aer_2.png"),
-        os.path.abspath("exp_data/sat_3.png"),
+        os.path.abspath("tests/exp_data/aer_2.png"),
+        os.path.abspath("tests/exp_data/sat_3.png"),
     ),
     (
         homography_finder_feature,
-        os.path.abspath("exp_data/aer_3.png"),
-        os.path.abspath("exp_data/sat_2.png"),
+        os.path.abspath("tests/exp_data/aer_3.png"),
+        os.path.abspath("tests/exp_data/sat_2.png"),
     ),
     (
         homography_finder_CNN,
-        os.path.abspath("exp_data/aer_3.png"),
-        os.path.abspath("exp_data/sat_2.png"),
+        os.path.abspath("tests/exp_data/aer_3.png"),
+        os.path.abspath("tests/exp_data/sat_2.png"),
     ),
 ]
 
