@@ -3,4 +3,5 @@ docker==7.1.0
 matplotlib==3.7.3
 numpy==1.26.2
 opencv-python==4.8.1.78
+progress
 pytest
