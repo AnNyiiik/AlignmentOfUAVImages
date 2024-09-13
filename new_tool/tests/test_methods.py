@@ -27,14 +27,13 @@ testdata_homography_search = [
 
 @pytest.mark.parametrize("method,query_path,reference_path", testdata_homography_search)
 def test_check_homography_search(method, query_path, reference_path):
-    absolute_path = os.path.abspath("AlignmentOfUAVImages/AlignmentOfUAVImages")
-    folder_with_kpts = os.path.join(absolute_path, "feature_based_method_results")
-    os.mkdir(folder_with_kpts)
+    os.mkdir("~/feature_based_method_results")
+    folder_with_kpts = os.path.abspath("feature_based_method_results")
     os.system(
-        f'cp {os.path.join(absolute_path, "new_tool/tests/exp_data/matched_kpts_query")} {folder_with_kpts}'
+        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_query")} {folder_with_kpts}'
     )
     os.system(
-        f'cp {os.path.join(absolute_path, "new_tool/tests/exp_data/matched_kpts_reference")} {folder_with_kpts}'
+        f'cp {os.path.abspath("new_tool/tests/exp_data/matched_kpts_reference")} {folder_with_kpts}'
     )
     H = method.align(query_path, reference_path)
     assert type(H) == np.ndarray
