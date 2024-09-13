@@ -27,7 +27,9 @@ class homography_finder_feature_based(homography_finder.homography_finder):
         query_folder = Path(query_saved_path).parent
         reference_folder = Path(reference_saved_path).parent
 
-        if not os.path.exists(os.path.join(absolute_path, "feature_based_method_results")):
+        if not os.path.exists(
+            os.path.join(absolute_path, "feature_based_method_results")
+        ):
             os.mkdir(os.path.join(absolute_path, "feature_based_method_results"))
         path_to_save = os.path.join(absolute_path, "feature_based_method_results")
 
