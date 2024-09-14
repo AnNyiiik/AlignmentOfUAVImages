@@ -51,7 +51,7 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
             == 0
         ):
             image_id = client.images.get(
-                "anyaaaaaa/unsupervised_deep_homography:version_4"
+                "anyaaaaaa/unsupervised_deep_homography:CNN_based_method"
             ).id
             os.system(f"docker container create -it --name CNN_method {image_id}")
             path_to_model = os.path.abspath("real_models")
