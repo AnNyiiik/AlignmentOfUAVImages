@@ -9,6 +9,34 @@ from scripts import homography_finder_feature_based
 
 
 class homography_finder_CNN_based(homography_finder.homography_finder):
+    def __init__(self):
+        os.system(
+            "docker pull anyaaaaaa/unsupervised_deep_homography:CNN_based_method >/dev/null 2>&1"
+        )
+
+        client = docker.from_env()
+
+        if (
+            len(
+                list(
+                    filter(
+                        lambda container: container.name == "CNN_method",
+                        client.containers.list(all=True),
+                    )
+                )
+            )
+            == 0
+        ):
+            image_id = client.images.get(
+                "anyaaaaaa/unsupervised_deep_homography:CNN_based_method"
+            ).id
+            os.system(f"docker container create -it --name CNN_method {image_id}")
+            path_to_model = os.path.abspath("real_models")
+            container_id = util.get_container_id_by_name(client, "CNN_method")
+            os.system(
+                f"docker cp {path_to_model} {container_id}:/workspace/unsupervisedDeepHomographyRAL2018/models >/dev/null 2>&1"
+            )
+
     def align(self, img_query_path, img_reference_path):
         if not os.path.exists(os.path.abspath(img_query_path)):
             raise FileNotFoundError(f"file {img_query_path} does not exist")
@@ -35,30 +63,6 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
         )
 
         client = docker.from_env()
-
-        os.system(
-            "docker pull anyaaaaaa/unsupervised_deep_homography:CNN_based_method >/dev/null 2>&1"
-        )
-        if (
-            len(
-                list(
-                    filter(
-                        lambda container: container.name == "CNN_method",
-                        client.containers.list(all=True),
-                    )
-                )
-            )
-            == 0
-        ):
-            image_id = client.images.get(
-                "anyaaaaaa/unsupervised_deep_homography:CNN_based_method"
-            ).id
-            os.system(f"docker container create -it --name CNN_method {image_id}")
-            path_to_model = os.path.abspath("real_models")
-            container_id = util.get_container_id_by_name(client, "CNN_method")
-            os.system(
-                f"docker cp {path_to_model} {container_id}:/workspace/unsupervisedDeepHomographyRAL2018/models >/dev/null 2>&1"
-            )
 
         container_id = util.get_container_id_by_name(client, "CNN_method")
         os.system(f"docker container start {container_id} >/dev/null 2>&1")
