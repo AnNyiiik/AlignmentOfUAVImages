@@ -23,7 +23,7 @@ Comparison of the configurations' results are presented on the following box plo
 
 ![plot](https://github.com/user-attachments/assets/412ff88b-c7a3-402c-8297-45aea598c5dd)
 
-|     provider     | mean value for error (pixels) | max error value | min error value | standard deviation |
+|     provider     | mean value for error (pixels) | standard deviation | min error value | max error value |
 | ---------------- | ----------------------------- | --------------- | --------------- | ------------------ |
 |      feature + google        |          26                   |      19        |       4         |          100        |
 | feature + esri |            39                 |        90       |         4       |       564           |
