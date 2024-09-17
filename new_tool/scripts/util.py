@@ -7,7 +7,9 @@ import os
 from pathlib import Path
 from progress.bar import IncrementalBar
 
-'''the method creates data for a cnn-based method which finds a homography between two images'''
+"""the method creates data for a cnn-based method which finds a homography between two images"""
+
+
 def make_data_for_CNN_method(width_query, height_query, H):
     corners_under_homography = calculate_pixels_coordinates_in_destination_image(
         [[0, 0], [width_query, 0], [width_query, height_query], [0, height_query]], H
@@ -56,8 +58,11 @@ def make_data_for_CNN_method(width_query, height_query, H):
 
     return images_names_path, gt_path, query_corners_path, CNN_based_method_data
 
-'''the method finds coordinates of a query image pixel in reference image according to a homography transformation 
-between images'''
+
+"""the method finds coordinates of a query image pixel in reference image according to a homography transformation 
+between images"""
+
+
 def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix):
     points_under_homography = cv.perspectiveTransform(
         np.array(pixels, dtype=np.float32).reshape(-1, 1, 2), homography_matrix
@@ -70,10 +75,13 @@ def calculate_pixels_coordinates_in_destination_image(pixels, homography_matrix)
         points_under_homography[i][0][1] = int(points_under_homography[i][0][1] / norm)
     return points_under_homography
 
-'''the method finds coordinates of a UAV's image pixel according to the homography transformation between UAV's image and 
+
+"""the method finds coordinates of a UAV's image pixel according to the homography transformation between UAV's image and 
 satellite image 
 it takes reference image, pixel coordinates into UAV image, homography matrix, geo-coordinates of top left and bottom right 
-corners of the reference image'''
+corners of the reference image"""
+
+
 def calculate_pixel_coordinates(
     image_reference,
     pixel,
@@ -94,7 +102,10 @@ def calculate_pixel_coordinates(
     ) / width * float((coordinates_of_bottom_right[1] - coordinates_of_top_left[1]))
     return lat, lon
 
-'''the method clips images according to a predefined proportion'''
+
+"""the method clips images according to a predefined proportion"""
+
+
 def clip_image(path_to_image, size=(240, 320)):
     image = cv.imread(path_to_image)
     height, width, _ = image.shape
@@ -115,7 +126,10 @@ def clip_image(path_to_image, size=(240, 320)):
 
     return cropped_img
 
-'''the returnes a docker container's name by its id'''
+
+"""the returnes a docker container's name by its id"""
+
+
 def get_container_id_by_name(client, name):
     try:
         container_id = (
@@ -132,7 +146,10 @@ def get_container_id_by_name(client, name):
     except:
         print(f"the container {name} doesn't exist")
 
-'''the method reads key points from file and returns a list of a key points'''
+
+"""the method reads key points from file and returns a list of a key points"""
+
+
 def read_key_points_from_file(path):
     with open(path, "r") as f:
         lines = [line.rstrip() for line in f]
@@ -142,7 +159,10 @@ def read_key_points_from_file(path):
             key_points.append(cv.KeyPoint(point[0], point[1], 1))
     return key_points
 
-'''the method reads a homography matrix from file'''
+
+"""the method reads a homography matrix from file"""
+
+
 def read_homography_matrix_from_file(path):
     with open(path, "r") as f:
         lines = f.readlines()
@@ -155,7 +175,10 @@ def read_homography_matrix_from_file(path):
     matrix = np.array(matrix)
     return matrix
 
-'''the method creates a temporary folder with all needed data for a method, which finds homography transformation between images'''
+
+"""the method creates a temporary folder with all needed data for a method, which finds homography transformation between images"""
+
+
 def create_temporary_folders_for_images(img_query, img_reference, path_to_folders):
     absolute_path = os.path.abspath(path_to_folders)
     if not os.path.exists(os.path.join(absolute_path, "uav")):
@@ -169,8 +192,11 @@ def create_temporary_folders_for_images(img_query, img_reference, path_to_folder
     cv.imwrite(str(reference_saved_path), img_reference)
     return query_saved_path, reference_saved_path
 
-'''the method finds reprojection error according to a homography transformation and ground truth correspondences
-it takes homography matrix, path to file with key points in a query images, path to file with key points in a reference image'''
+
+"""the method finds reprojection error according to a homography transformation and ground truth correspondences
+it takes homography matrix, path to file with key points in a query images, path to file with key points in a reference image"""
+
+
 def find_reprojection_error(H_pred, path_to_uav_gt_corr, path_to_sat_gt_corr):
     uav_kpts = read_key_points_from_file(path_to_uav_gt_corr)
     uav_kpts = [[uav_kpts[i].pt[0], uav_kpts[i].pt[1]] for i in range(len(uav_kpts))]
@@ -185,7 +211,10 @@ def find_reprojection_error(H_pred, path_to_uav_gt_corr, path_to_sat_gt_corr):
         error += decline
     return error / len(uav_kpts)
 
-'''the method finds reprojection errors for a set of images pairs, then it returns mean and standard deviation values'''
+
+"""the method finds reprojection errors for a set of images pairs, then it returns mean and standard deviation values"""
+
+
 def set_experiment(path_to_data, pair_names, kpts_files, method, method_name):
     errors = list()
     bar = IncrementalBar(max=len(pair_names))
@@ -206,7 +235,10 @@ def set_experiment(path_to_data, pair_names, kpts_files, method, method_name):
     mean, dev = statistics.mean(errors), statistics.stdev(errors)
     return errors, mean, dev
 
-'''the method saves all the results of an experiment to a given file'''
+
+"""the method saves all the results of an experiment to a given file"""
+
+
 def save_experiment_results(folder_to_save, method_name, map_name, mean, dev, errors):
     with open(
         os.path.join(
