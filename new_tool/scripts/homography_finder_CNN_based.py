@@ -37,6 +37,10 @@ class homography_finder_CNN_based(homography_finder.homography_finder):
                 f"docker cp {path_to_model} {container_id}:/workspace/unsupervisedDeepHomographyRAL2018/models >/dev/null 2>&1"
             )
 
+    '''the method finds a homography matrix between two images: 1st - UAV's, 2nd - satellite's
+       the method uses CNN-based method to find a transformation
+       and takes images paths, if there is no transformation between images it returns null
+       '''
     def align(self, img_query_path, img_reference_path):
         if not os.path.exists(os.path.abspath(img_query_path)):
             raise FileNotFoundError(f"file {img_query_path} does not exist")

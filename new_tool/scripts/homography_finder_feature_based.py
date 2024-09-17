@@ -59,6 +59,10 @@ class homography_finder_feature_based(homography_finder.homography_finder):
         H, _ = cv.findHomography(np.array(source), np.array(dest), cv.RANSAC)
         return H
 
+    '''the method finds a homography matrix between two images: 1st - UAV's, 2nd - satellite's
+    the method uses feature-based method to find a transformation
+    and takes images paths, if there is no transformation between images it returns null
+    '''
     def align(self, img_query_path, img_reference_path):
         if not os.path.exists(os.path.abspath(img_query_path)):
             raise FileNotFoundError(f"file {img_query_path} does not exist")
